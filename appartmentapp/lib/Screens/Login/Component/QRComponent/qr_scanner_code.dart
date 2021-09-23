@@ -53,8 +53,12 @@ class _QrScannerState extends State<QrScanner>{
       color: Colors.white24,
     ),
     child: Text(
-    barcodeQR == null ?  'Scan a code' : "Code is accept !!!",
+    barcodeQR != null ? 'Accept code !!!' : 'Scan a code' ,
     maxLines: 3,
+    style: TextStyle(
+      color: barcodeQR != null ? Colors.greenAccent : Colors.grey[900],
+      fontWeight: FontWeight.bold,
+    ),
     ),
   );
 
@@ -85,8 +89,9 @@ class _QrScannerState extends State<QrScanner>{
           onPressed: (){
             Navigator.pop(context);
             controllerLoginCode.text = barcodeQR!.code;
+            barcodeQR = null;
           },
-          icon: Icon(Icons.arrow_back,)
+          icon: const Icon(Icons.arrow_back)
         ),
         IconButton(
           icon: FutureBuilder<bool?>(
@@ -116,7 +121,7 @@ class _QrScannerState extends State<QrScanner>{
             future: controllerQR?.getCameraInfo(),
             builder: (context,snapshot){
               if(snapshot.data != null){
-                return Icon(Icons.switch_camera);
+                return const Icon(Icons.switch_camera);
               }
               else{
                 return Container();
@@ -131,7 +136,11 @@ class _QrScannerState extends State<QrScanner>{
   void onQRViewCreated(QRViewController controller){
     setState(() => controllerQR = controller);
 
-    controller.scannedDataStream
-        .listen((barcode) => setState(() => barcodeQR = barcode));
+    controller.scannedDataStream.listen((barcode) => setState(() =>{
+      if(barcodeQR == null){
+        barcodeQR = barcode
+      }
+      else{Navigator.pop(context)}
+    }));
   }
 }

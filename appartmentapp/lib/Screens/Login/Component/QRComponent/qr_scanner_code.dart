@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:appartmentapp/Screens/Login/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
@@ -8,15 +8,16 @@ class QrScanner extends StatefulWidget{
   _QrScannerState createState() => _QrScannerState();
 }
 
+QRViewController? controllerQR;
+Barcode? barcodeQR;
+
 class _QrScannerState extends State<QrScanner>{
   final qrKey = GlobalKey(debugLabel: "QR");
 
-  QRViewController? controller;
-  Barcode? barcode;
 
   @override 
   void dispose(){
-    controller?.dispose();
+    controllerQR?.dispose();
     super.dispose();
   }
 
@@ -25,9 +26,9 @@ class _QrScannerState extends State<QrScanner>{
     super.reassemble();
 
     if(Platform.isAndroid){
-      await controller!.pauseCamera();
+      await controllerQR!.pauseCamera();
     }
-    controller!.resumeCamera();
+    controllerQR!.resumeCamera();
   }
 
 
@@ -39,7 +40,7 @@ class _QrScannerState extends State<QrScanner>{
         children: <Widget>[
           buildQrView(context),
           Positioned(bottom:10, child: buildResult(),),
-          Positioned(top:10, child: buildButtonController(),)
+          Positioned(top:10, child: buildButtonController(context),)
         ],
       ),
     ),
@@ -52,7 +53,7 @@ class _QrScannerState extends State<QrScanner>{
       color: Colors.white24,
     ),
     child: Text(
-    barcode != null ? 'Result ${barcode!.code}' : 'Scan a code',
+    barcodeQR == null ?  'Scan a code' : "Code is accept !!!",
     maxLines: 3,
     ),
   );
@@ -69,7 +70,7 @@ class _QrScannerState extends State<QrScanner>{
     ),
   );
 
-  Widget buildButtonController() => Container(
+  Widget buildButtonController(context) => Container(
     padding: EdgeInsets.symmetric(horizontal: 16),
     decoration: BoxDecoration(
       color: Colors.white24,
@@ -81,8 +82,14 @@ class _QrScannerState extends State<QrScanner>{
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         IconButton(
+          onPressed: (){
+            Navigator.pop(context);
+          },
+          icon: Icon(Icons.arrow_back,)
+        ),
+        IconButton(
           icon: FutureBuilder<bool?>(
-            future: controller?.getFlashStatus(),
+            future: controllerQR?.getFlashStatus(),
             builder: (context, snapshot){
               if(snapshot.data != null){
                 return Icon(
@@ -95,17 +102,17 @@ class _QrScannerState extends State<QrScanner>{
             },
           ),
           onPressed: () async{
-            await controller?.toggleFlash();
+            await controllerQR?.toggleFlash();
             setState(() {});
           },
         ),
         IconButton(
           onPressed: () async{
-            await controller?.flipCamera();
+            await controllerQR?.flipCamera();
             setState(() {}); 
           },
           icon: FutureBuilder(
-            future: controller?.getCameraInfo(),
+            future: controllerQR?.getCameraInfo(),
             builder: (context,snapshot){
               if(snapshot.data != null){
                 return Icon(Icons.switch_camera);
@@ -121,9 +128,9 @@ class _QrScannerState extends State<QrScanner>{
   );
 
   void onQRViewCreated(QRViewController controller){
-    setState(() => this.controller = controller);
+    setState(() => controllerQR = controller);
 
     controller.scannedDataStream
-        .listen((barcode) => setState(() => this.barcode = barcode));
+        .listen((barcode) => setState(() => barcodeQR = barcode));
   }
 }

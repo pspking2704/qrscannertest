@@ -1,5 +1,5 @@
-// import 'package:appartmentapp/Screens/qr_create_page.dart';
-import 'package:appartmentapp/Screens/qr_scanner_page.dart';
+import 'package:appartmentapp/Screens/Login/login_screen.dart';
+import 'package:appartmentapp/constants.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -9,14 +9,17 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
+  // Widget cho main của ứng dựng
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(),
-      home: QrScanner(),
+      debugShowCheckedModeBanner: false,
+      title: "Flutter Auth",
+      theme: ThemeData(
+        primaryColor: kPrimaryColor,
+        scaffoldBackgroundColor: Colors.white,
+      ),
+      home: LoginScreen(),
     );
   }
 }
-

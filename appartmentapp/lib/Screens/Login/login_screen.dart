@@ -113,7 +113,6 @@ class _LoginScreenState extends State<LoginScreen>{
                 MaterialPageRoute(builder: (context) => QrScanner())
               );
             });
-            controllerLoginCode.text = barcodeQR!.code;
           },
         ),
       ),

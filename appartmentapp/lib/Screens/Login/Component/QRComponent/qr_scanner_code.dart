@@ -84,6 +84,7 @@ class _QrScannerState extends State<QrScanner>{
         IconButton(
           onPressed: (){
             Navigator.pop(context);
+            controllerLoginCode.text = barcodeQR!.code;
           },
           icon: Icon(Icons.arrow_back,)
         ),
